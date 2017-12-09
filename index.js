@@ -10,9 +10,6 @@ var isEl = require('is-el');
  * @return {(string|boolean)} CSS selector that will return only the passed element, false if element is not valid
  */
 module.exports = function (el) {
-	// Iterator for nth-child loop
-	var i = null;
-
 	// Query parts collection
 	var s = [];
 
@@ -37,10 +34,8 @@ module.exports = function (el) {
 			// Get the element's position amongst its
 			// siblings to build an "nth-child" selector
 			} else {
-				for (i = 1; el.previousElementSibling; i++) {
-					el = el.previousElementSibling;
-				}
-				s.unshift(el.tagName.toLowerCase() + ':nth-child(' + i + ')');
+				var position = countPreviousSiblings(el) + 1;
+				s.unshift(el.tagName.toLowerCase() + ':nth-child(' + position + ')');
 			}
 			// Repeat for parent
 			el = el.parentNode;
@@ -50,3 +45,12 @@ module.exports = function (el) {
 	// Return all parts, joined
 	return s.join(' > ');
 };
+
+function countPreviousSiblings(el) {
+	var count = 0;
+	while (el.previousElementSibling) {
+		el = el.previousElementSibling;
+		count += 1;
+	}
+	return count;
+}

@@ -48,4 +48,28 @@ test('should build a unique selector for any DOM element', assert => {
 	assert.end();
 });
 
+test('should handle when ancestor has mixed siblings', assert => {
+	// setup
+	const oldHtml = document.body.innerHTML;
+	document.body.innerHTML = `
+		<div>
+			<h2>header</h2>
+			<div>
+			  <span class="here"></span>
+			</div>
+		</div>
+	`;
+
+	const element = document.querySelector('.here');
+
+	const selector = getSelector(element);
+
+	assert.equal(selector, 'html > body > div:nth-child(1) > div:nth-child(2) > span:nth-child(1)');
+	assert.strictEqual(document.querySelector(selector), element);
+	assert.end();
+
+	// teardown
+	document.body.innerHTML = oldHtml;
+});
+
 window.close();
